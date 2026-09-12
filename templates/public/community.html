@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}- Community{% endblock %}
+{% block content %}
+<!-- Hero -->
+<div class="relative overflow-hidden py-20 border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="lg:grid lg:grid-cols-2 lg:gap-12 items-center">
+            <div>
+                <h1 class="text-5xl md:text-6xl font-heading text-white uppercase tracking-tight mb-6 leading-none">
+                    MEET THE PEOPLE<br>BUILDING WHAT'S<br><span class="text-primary">NEXT.</span>
+                </h1>
+                <p class="text-gray-400 text-sm mb-8 max-w-sm leading-relaxed">
+                    Join Mumbai's most ambitious network of founders, creators, and builders. A diverse ecosystem united by a singular drive to create.
+                </p>
+                <a href="{{ url_for('public_signup') }}" class="bg-primary hover:bg-primaryHover text-white px-6 py-2 rounded text-[10px] font-bold uppercase tracking-wider transition inline-block">
+                    JOIN THE NETWORK +
+                </a>
+            </div>
+            <div class="mt-12 lg:mt-0">
+                <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=800" class="rounded object-cover h-[350px] w-full grayscale opacity-80 border border-gray-700">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Grid section -->
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <div class="flex justify-between items-center mb-10 pb-4">
+        <div>
+            <h2 class="text-xl font-heading text-white mb-4 uppercase tracking-wider">FIND YOUR PEOPLE.</h2>
+            <div class="flex space-x-2">
+                <span class="px-3 py-1 bg-primary text-white text-[9px] font-bold rounded uppercase tracking-wider cursor-pointer">ALL</span>
+                <span class="px-3 py-1 bg-surface border border-gray-700 text-gray-400 text-[9px] font-bold rounded uppercase tracking-wider cursor-pointer hover:bg-gray-800 transition">FOUNDERS</span>
+                <span class="px-3 py-1 bg-surface border border-gray-700 text-gray-400 text-[9px] font-bold rounded uppercase tracking-wider cursor-pointer hover:bg-gray-800 transition">CREATORS</span>
+            </div>
+        </div>
+        <div class="hidden md:block">
+            <div class="relative">
+                <input type="text" placeholder="Search members..." class="bg-surface border border-gray-800 rounded py-1.5 px-3 text-xs text-white focus:outline-none focus:border-gray-600">
+                <svg class="absolute right-2 top-2 w-3 h-3 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path></svg>
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Mock Member Cards as per design -->
+        <div class="bg-surface border border-gray-800 rounded p-3 hover:border-gray-600 transition flex flex-col">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150" class="w-full aspect-square object-cover rounded-sm mb-3 grayscale">
+            <h4 class="text-white font-bold text-xs mb-0.5">Karan Desai</h4>
+            <p class="text-gray-500 text-[10px] mb-3">Founder, FinTech</p>
+            <div class="flex gap-1 mt-auto flex-wrap">
+                <span class="text-[8px] bg-gray-900 border border-gray-800 px-1 py-0.5 rounded text-gray-400 font-bold uppercase tracking-wider">FINTECH</span>
+            </div>
+            <div class="mt-3 text-[9px] text-primary font-bold uppercase tracking-wider hover:text-white cursor-pointer transition">View Profile +</div>
+        </div>
+        <div class="bg-surface border border-gray-800 rounded p-3 hover:border-gray-600 transition flex flex-col">
+            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150" class="w-full aspect-square object-cover rounded-sm mb-3 grayscale">
+            <h4 class="text-white font-bold text-xs mb-0.5">Priya Sharma</h4>
+            <p class="text-gray-500 text-[10px] mb-3">Creative Director</p>
+            <div class="flex gap-1 mt-auto flex-wrap">
+                <span class="text-[8px] bg-gray-900 border border-gray-800 px-1 py-0.5 rounded text-gray-400 font-bold uppercase tracking-wider">DESIGN</span>
+            </div>
+            <div class="mt-3 text-[9px] text-primary font-bold uppercase tracking-wider hover:text-white cursor-pointer transition">View Profile +</div>
+        </div>
+        <div class="bg-surface border border-gray-800 rounded p-3 hover:border-gray-600 transition flex flex-col">
+            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150" class="w-full aspect-square object-cover rounded-sm mb-3 grayscale">
+            <h4 class="text-white font-bold text-xs mb-0.5">Rohan Mehta</h4>
+            <p class="text-gray-500 text-[10px] mb-3 leading-tight">Managing Partner, Elevate</p>
+            <div class="flex gap-1 mt-auto flex-wrap">
+                <span class="text-[8px] bg-gray-900 border border-gray-800 px-1 py-0.5 rounded text-gray-400 font-bold uppercase tracking-wider">INVESTMENT</span>
+                <span class="text-[8px] bg-gray-900 border border-gray-800 px-1 py-0.5 rounded text-gray-400 font-bold uppercase tracking-wider">STRATEGY</span>
+            </div>
+            <div class="mt-3 text-[9px] text-primary font-bold uppercase tracking-wider hover:text-white cursor-pointer transition">View Profile +</div>
+        </div>
+        <div class="bg-surface border border-gray-800 rounded p-3 hover:border-gray-600 transition flex flex-col">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150" class="w-full aspect-square object-cover rounded-sm mb-3 grayscale">
+            <h4 class="text-white font-bold text-xs mb-0.5">Ananya Iyer</h4>
+            <p class="text-gray-500 text-[10px] mb-3 leading-tight">Head of Product, NuApp</p>
+            <div class="flex gap-1 mt-auto flex-wrap">
+                <span class="text-[8px] bg-gray-900 border border-gray-800 px-1 py-0.5 rounded text-gray-400 font-bold uppercase tracking-wider">PRODUCT</span>
+                <span class="text-[8px] bg-gray-900 border border-gray-800 px-1 py-0.5 rounded text-gray-400 font-bold uppercase tracking-wider">SAAS</span>
+            </div>
+            <div class="mt-3 text-[9px] text-primary font-bold uppercase tracking-wider hover:text-white cursor-pointer transition">View Profile +</div>
+        </div>
+        <div class="bg-surface border border-gray-800 rounded p-3 hover:border-gray-600 transition flex flex-col">
+            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150" class="w-full aspect-square object-cover rounded-sm mb-3 grayscale">
+            <h4 class="text-white font-bold text-xs mb-0.5">Vikram Singh</h4>
+            <p class="text-gray-500 text-[10px] mb-3">Founder, TechWave</p>
+            <div class="flex gap-1 mt-auto flex-wrap">
+                <span class="text-[8px] bg-gray-900 border border-gray-800 px-1 py-0.5 rounded text-gray-400 font-bold uppercase tracking-wider">HARDWARE</span>
+            </div>
+            <div class="mt-3 text-[9px] text-primary font-bold uppercase tracking-wider hover:text-white cursor-pointer transition">View Profile +</div>
+        </div>
+        <div class="bg-surface border border-gray-800 rounded p-3 hover:border-gray-600 transition flex flex-col">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150" class="w-full aspect-square object-cover rounded-sm mb-3 grayscale">
+            <h4 class="text-white font-bold text-xs mb-0.5">Meera Kapoor</h4>
+            <p class="text-gray-500 text-[10px] mb-3 leading-tight">Lead Designer, UI/UX Studio</p>
+            <div class="flex gap-1 mt-auto flex-wrap">
+                <span class="text-[8px] bg-gray-900 border border-gray-800 px-1 py-0.5 rounded text-gray-400 font-bold uppercase tracking-wider">DESIGN</span>
+                <span class="text-[8px] bg-gray-900 border border-gray-800 px-1 py-0.5 rounded text-gray-400 font-bold uppercase tracking-wider">AGENCY</span>
+            </div>
+            <div class="mt-3 text-[9px] text-primary font-bold uppercase tracking-wider hover:text-white cursor-pointer transition">View Profile +</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+      # Tell Flask to connect to the 'db' container instead of localhost
+      - DATABASE_URL=postgresql://postgres:password@db:5432/builtinmumbai
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      # Mount the static/uploads folder to persist uploaded images even if container restarts
+      - uploads_data:/app/static/uploads
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=builtinmumbai
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d builtinmumbai"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  uploads_data:

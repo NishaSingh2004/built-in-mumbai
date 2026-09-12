@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}- Login{% endblock %}
+
+{% block content %}
+<div class="flex min-h-[calc(100vh-80px-100px)]">
+    <!-- Left Pane -->
+    <div class="hidden lg:flex lg:w-1/2 flex-col justify-center px-16 relative bg-background">
+        <!-- Floating dots decoration -->
+        <div class="absolute top-32 left-32 w-2 h-2 rounded-full bg-emerald-500 opacity-50"></div>
+        <div class="absolute top-1/2 right-32 w-3 h-3 rounded-full bg-primary opacity-50"></div>
+        <div class="absolute bottom-32 left-1/4 w-2 h-2 rounded-full bg-emerald-500 opacity-50"></div>
+        <div class="absolute bottom-20 right-1/3 w-4 h-4 rounded-full bg-gray-400 opacity-50"></div>
+
+        <div class="max-w-md mx-auto text-center z-10">
+            <h1 class="text-6xl font-heading mb-6 tracking-tight">
+                <span class="block">WELCOME</span>
+                <span class="block">BACK.</span>
+            </h1>
+            <p class="text-gray-400 text-lg">
+                Reconnect with the people, ideas and opportunities waiting inside Build in Mumbai.
+            </p>
+        </div>
+    </div>
+
+    <!-- Right Pane -->
+    <div class="w-full lg:w-1/2 flex items-center justify-center bg-surface border-l border-gray-800 p-8">
+        <div class="w-full max-w-md">
+            <p class="text-primary text-xs font-bold tracking-widest uppercase mb-2">WELCOME BACK</p>
+            <h2 class="text-3xl font-heading mb-8">GOOD TO SEE YOU AGAIN.</h2>
+
+            <form method="POST" action="{{ url_for('public_login') }}">
+                <div class="space-y-6">
+                    <div>
+                        <input type="email" name="email" placeholder="Email Address" required
+                            class="w-full bg-transparent border-b border-gray-700 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-primary transition">
+                    </div>
+                    
+                    <div class="relative">
+                        <input type="password" name="password" placeholder="Password" required
+                            class="w-full bg-transparent border-b border-gray-700 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-primary transition pr-10">
+                        <button type="button" class="absolute right-0 top-3 text-gray-500 hover:text-white">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2">
+                        <div class="flex items-center">
+                            <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 rounded border-gray-700 bg-transparent text-primary focus:ring-primary focus:ring-offset-gray-900">
+                            <label for="remember-me" class="ml-2 block text-sm text-gray-400">
+                                Remember Me
+                            </label>
+                        </div>
+                        <div class="text-sm">
+                            <a href="#" class="font-medium text-gray-400 hover:text-white transition">
+                                Forgot password?
+                            </a>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-3 px-4 rounded transition flex justify-center items-center">
+                        LOG IN &rarr;
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-8">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-800"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-surface text-gray-500 uppercase text-xs">OR</span>
+                    </div>
+                </div>
+
+                <div class="mt-6 grid grid-cols-1 gap-3">
+                    <a href="#" class="w-full inline-flex justify-center py-3 px-4 border border-gray-700 rounded shadow-sm bg-transparent text-sm font-medium text-gray-300 hover:bg-gray-800 transition">
+                        <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z" />
+                        </svg>
+                        CONTINUE WITH GOOGLE
+                    </a>
+                    <a href="#" class="w-full inline-flex justify-center py-3 px-4 border border-gray-700 rounded shadow-sm bg-transparent text-sm font-medium text-gray-300 hover:bg-gray-800 transition">
+                        <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path fill-rule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clip-rule="evenodd" />
+                        </svg>
+                        CONTINUE WITH LINKEDIN
+                    </a>
+                </div>
+            </div>
+
+            <div class="mt-8 text-center">
+                <a href="{{ url_for('public_signup') }}" class="text-xs font-bold text-gray-400 hover:text-white transition uppercase tracking-wider">
+                    DON'T HAVE AN ACCOUNT? JOIN THE COMMUNITY &rarr;
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

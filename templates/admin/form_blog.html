@@ -1,0 +1,67 @@
+{% extends "admin/base_admin.html" %}
+{% block header_title %}{% if item %}Edit{% else %}Add{% endif %} Blog{% endblock %}
+{% block content %}
+<div class="max-w-2xl bg-surface border border-gray-800 rounded-lg p-8">
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+        
+        <!-- Standard fields based on entity type -->
+        {% if 'blog' == 'event' %}
+        <div>
+            <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Title</label>
+            <input type="text" name="title" value="{{ item.title if item else '' }}" required class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">
+        </div>
+        <div>
+            <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Description</label>
+            <textarea name="description" rows="4" required class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">{{ item.description if item else '' }}</textarea>
+        </div>
+        <div>
+            <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Event Date (YYYY-MM-DD HH:MM:SS)</label>
+            <input type="text" name="event_date" value="{{ item.event_date.strftime('%Y-%m-%d %H:%M:%S') if item else '' }}" required class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">
+        </div>
+        {% endif %}
+
+        {% if 'blog' == 'blog' %}
+        <div>
+            <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Title</label>
+            <input type="text" name="title" value="{{ item.title if item else '' }}" required class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">
+        </div>
+        <div>
+            <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Content</label>
+            <textarea name="content" rows="6" required class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">{{ item.content if item else '' }}</textarea>
+        </div>
+        <div>
+            <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Author</label>
+            <input type="text" name="author" value="{{ item.author if item else '' }}" required class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">
+        </div>
+        {% endif %}
+
+        {% if 'blog' == 'mentor' or 'blog' == 'founder' %}
+        <div>
+            <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Name</label>
+            <input type="text" name="name" value="{{ item.name if item else '' }}" required class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">
+        </div>
+        <div>
+            <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">{% if 'blog' == 'mentor' %}Expertise{% else %}Role{% endif %}</label>
+            <input type="text" name="{% if 'blog' == 'mentor' %}expertise{% else %}role{% endif %}" value="{{ item.expertise if 'blog' == 'mentor' and item else (item.role if item else '') }}" required class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">
+        </div>
+        <div>
+            <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Bio</label>
+            <textarea name="bio" rows="4" required class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">{{ item.bio if item else '' }}</textarea>
+        </div>
+        {% endif %}
+
+        <div>
+            <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Image (Optional)</label>
+            <input type="file" name="image" class="w-full text-gray-400 text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-gray-800 file:text-white hover:file:bg-gray-700 cursor-pointer">
+            {% if item and item.image_filename %}
+                <p class="text-xs text-gray-500 mt-2">Current file: {{ item.image_filename }}</p>
+            {% endif %}
+        </div>
+
+        <div class="pt-4 flex space-x-4">
+            <button type="submit" class="bg-primary hover:bg-primaryHover text-white font-bold py-2 px-6 rounded transition">Save</button>
+            <a href="{{ url_for('manage_blogs') }}" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded transition">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

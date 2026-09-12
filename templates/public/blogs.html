@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}- Blog{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    
+    <!-- Featured Hero -->
+    <div class="relative w-full h-[500px] rounded-xl overflow-hidden mb-20 group">
+        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=2000" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition duration-700">
+        <div class="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent"></div>
+        <div class="absolute bottom-0 left-0 p-10 md:p-16 w-full md:w-2/3">
+            <span class="text-primary text-[10px] font-bold uppercase tracking-widest mb-4 block">Ecosystem</span>
+            <h1 class="text-4xl md:text-5xl font-heading text-white mb-6 leading-tight">The Architects of Mumbai's New Tech Stack</h1>
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-full bg-gray-500 overflow-hidden mr-4 border-2 border-surface">
+                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <p class="text-white text-xs font-bold">Rahul Prasad</p>
+                    <p class="text-gray-400 text-[10px] uppercase tracking-wider">Oct 12 - 5 min read</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="text-2xl font-heading text-white mb-8 border-b border-gray-800 pb-4">Latest Thinking</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {% for blog in blogs %}
+        <div class="flex flex-col group cursor-pointer border-b border-gray-800 pb-6 md:border-none md:pb-0">
+            <div class="relative h-56 overflow-hidden rounded-lg mb-6">
+                {% if blog.image_filename %}
+                <img src="{{ url_for('static', filename='uploads/blogs/' + blog.image_filename) }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                {% else %}
+                <div class="w-full h-full bg-gray-800 flex items-center justify-center text-gray-600">No Image</div>
+                {% endif %}
+            </div>
+            <div class="flex gap-2 mb-4">
+                <span class="text-[9px] font-bold uppercase tracking-wider text-emerald-400 border border-emerald-400/30 px-2 py-0.5 rounded">STARTUPS</span>
+                <span class="text-[9px] font-bold uppercase tracking-wider text-gray-400 border border-gray-700 px-2 py-0.5 rounded">{{ blog.created_at.strftime('%b %d') }}</span>
+            </div>
+            <h3 class="text-lg font-bold text-white mb-3 group-hover:text-primary transition leading-tight">{{ blog.title }}</h3>
+            <p class="text-gray-400 text-xs mb-6 flex-grow line-clamp-3 leading-relaxed">{{ blog.content }}</p>
+            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest hover:text-white transition">READ ARTICLE +</p>
+        </div>
+        {% else %}
+        <p class="text-gray-400">No blogs found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

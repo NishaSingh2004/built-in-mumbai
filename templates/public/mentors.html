@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}- Mentorship{% endblock %}
+{% block content %}
+<!-- Hero -->
+<div class="relative bg-background overflow-hidden border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-32">
+        <div class="lg:grid lg:grid-cols-2 lg:gap-16 items-center">
+            <div>
+                <h1 class="text-5xl md:text-7xl font-heading text-white uppercase tracking-tight mb-6 leading-none">
+                    YOU DON'T HAVE<br>TO FIGURE IT OUT<br><span class="text-primary">ALONE.</span>
+                </h1>
+                <p class="text-gray-400 text-base mb-10 max-w-lg leading-relaxed">
+                    Connect with people who have already walked parts of the path you're trying to build. A community designed for Mumbai's most ambitious founders.
+                </p>
+                <button class="bg-primary hover:bg-primaryHover text-white px-8 py-3 rounded text-[10px] font-bold uppercase tracking-wider transition">
+                    FIND A MENTOR >
+                </button>
+            </div>
+            <div class="mt-16 lg:mt-0 hidden lg:block">
+                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800" class="rounded-xl grayscale opacity-60">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Value Props -->
+<div class="bg-[#0f1115] py-24 border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-2xl md:text-3xl font-heading text-gray-300 mb-16 max-w-xl uppercase tracking-wider">
+            THE RIGHT CONVERSATION CAN CHANGE YOUR DIRECTION.
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div class="border-t border-gray-800 pt-6">
+                <p class="text-5xl font-heading text-primary mb-4 opacity-80">01</p>
+                <h3 class="text-lg font-bold text-white mb-3">Clarity</h3>
+                <p class="text-gray-400 text-xs leading-relaxed">Cut through the noise. Get actionable insights on product strategy and go-to-market from those who have successfully navigated the early stages.</p>
+            </div>
+            <div class="border-t border-gray-800 pt-6">
+                <p class="text-5xl font-heading text-primary mb-4 opacity-80">02</p>
+                <h3 class="text-lg font-bold text-white mb-3">Direction</h3>
+                <p class="text-gray-400 text-xs leading-relaxed">Avoid common pitfalls. A mentor acts as a sounding board, helping you refine your roadmap and prioritize what actually moves the needle.</p>
+            </div>
+            <div class="border-t border-gray-800 pt-6">
+                <p class="text-5xl font-heading text-primary mb-4 opacity-80">03</p>
+                <h3 class="text-lg font-bold text-white mb-3">Confidence</h3>
+                <p class="text-gray-400 text-xs leading-relaxed">Building is lonely. Having someone in your corner who understands the pressure provides the resilience needed to keep going.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mentors Grid -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+    <h2 class="text-2xl font-heading text-white mb-12 uppercase">Meet Our Mentors</h2>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        {% for mentor in mentors %}
+        <div class="bg-surface border border-gray-800 rounded p-6 text-center hover:border-gray-600 transition flex flex-col items-center">
+            {% if mentor.image_filename %}
+            <img src="{{ url_for('static', filename='uploads/mentors/' + mentor.image_filename) }}" class="w-20 h-20 rounded-full mb-4 object-cover grayscale">
+            {% else %}
+            <div class="w-20 h-20 rounded-full mb-4 bg-gray-800 flex items-center justify-center text-gray-500">Img</div>
+            {% endif %}
+            <h5 class="text-sm font-bold text-white mb-1">{{ mentor.name }}</h5>
+            <h6 class="text-[10px] text-primary font-bold uppercase tracking-wider mb-4">{{ mentor.expertise }}</h6>
+            <p class="text-xs text-gray-500 line-clamp-3 leading-relaxed">{{ mentor.bio }}</p>
+        </div>
+        {% else %}
+        <p class="text-gray-400 col-span-full">No mentors found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
