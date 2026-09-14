@@ -26,6 +26,7 @@ class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
+    next_stage_journey = db.Column(db.Text, nullable=True)
     event_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     image_filename = db.Column(db.String(255), nullable=True) # Path to the uploaded photo
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -55,6 +56,8 @@ class Mentor(db.Model):
     name = db.Column(db.String(100), nullable=False)
     expertise = db.Column(db.String(150), nullable=False) # e.g., "Software Engineering", "Marketing"
     bio = db.Column(db.Text, nullable=False)
+    approach = db.Column(db.Text, nullable=True)
+    mentorship_details = db.Column(db.Text, nullable=True)
     image_filename = db.Column(db.String(255), nullable=True) # Path to the uploaded photo
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -69,6 +72,8 @@ class Founder(db.Model):
     name = db.Column(db.String(100), nullable=False)
     role = db.Column(db.String(100), nullable=False) # e.g., "Co-Founder & CEO"
     bio = db.Column(db.Text, nullable=False)
+    approach = db.Column(db.Text, nullable=True)
+    mentorship_details = db.Column(db.Text, nullable=True)
     image_filename = db.Column(db.String(255), nullable=True) # Path to the uploaded photo
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -86,3 +91,53 @@ class Member(db.Model):
     password_hash = db.Column(db.String(128), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+
+
+# -----------------------------------------------------------------------------
+# Event Registration Model
+# -----------------------------------------------------------------------------
+class EventRegistration(db.Model):
+    """
+    Represents a user registering for an event.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
+    member_id = db.Column(db.Integer, db.ForeignKey('member.id'), nullable=False)
+    expectation = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    event = db.relationship('Event', backref=db.backref('registrations', lazy=True, cascade="all, delete-orphan"))
+    member = db.relationship('Member', backref=db.backref('registrations', lazy=True, cascade="all, delete-orphan"))
+
+
+# -----------------------------------------------------------------------------
+# Event Expert Image Model
+# -----------------------------------------------------------------------------
+class EventExpertImage(db.Model):
+    """
+    Represents an expert image attached to an event.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
+    image_filename = db.Column(db.String(255), nullable=False)
+    
+    event = db.relationship('Event', backref=db.backref('expert_images', lazy=True, cascade="all, delete-orphan"))
+
+# -----------------------------------------------------------------------------
+# Mentorship Request Model
+# -----------------------------------------------------------------------------
+class MentorshipRequest(db.Model):
+    """
+    Represents a request for mentorship from a public user.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    member_id = db.Column(db.Integer, db.ForeignKey('member.id'), nullable=False)
+    expectation = db.Column(db.Text, nullable=True)
+    mentor_id = db.Column(db.Integer, db.ForeignKey('mentor.id'), nullable=True)
+    founder_id = db.Column(db.Integer, db.ForeignKey('founder.id'), nullable=True)
+    message = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    member = db.relationship('Member', backref=db.backref('mentorship_requests', lazy=True, cascade="all, delete-orphan"))
+    mentor = db.relationship('Mentor', backref=db.backref('requests', lazy=True, cascade="all, delete-orphan"))
+    founder = db.relationship('Founder', backref=db.backref('requests', lazy=True, cascade="all, delete-orphan"))

@@ -9,6 +9,7 @@
 
     <div class="space-y-32">
         {% for founder in founders %}
+        <a href="{{ url_for('public_founder_detail', id=founder.id) }}" class="block group cursor-pointer w-full hover:bg-gray-900 transition p-4 rounded-xl">
         <div class="flex flex-col md:flex-row items-center gap-16 {% if loop.index0 % 2 != 0 %}md:flex-row-reverse{% endif %}">
             <div class="w-full md:w-1/2">
                 {% if founder.image_filename %}
@@ -31,6 +32,7 @@
                 </button>
             </div>
         </div>
+        </a>
         {% else %}
         <p class="text-gray-400">No founders found.</p>
         {% endfor %}

@@ -1,0 +1,43 @@
+{% extends "admin/base_admin.html" %}
+{% block header_title %}Mentorship Requests{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-8">
+    <h1 class="text-2xl font-bold text-white">Mentorship Requests</h1>
+</div>
+
+<div class="bg-surface border border-gray-800 rounded-lg overflow-hidden">
+    <table class="w-full text-left text-sm text-gray-400">
+        <thead class="bg-gray-800/50 text-gray-300 uppercase text-xs font-bold border-b border-gray-800">
+            <tr>
+                <th class="px-6 py-4">Requested By</th>
+                <th class="px-6 py-4">Contact</th>
+                <th class="px-6 py-4">Requested Expert</th>
+                <th class="px-6 py-4">Message / Reason</th>
+                <th class="px-6 py-4 text-right">Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for req in items %}
+            <tr class="border-b border-gray-800 hover:bg-gray-800/30 transition">
+                <td class="px-6 py-4 font-medium text-white">{{ req.member.first_name }} {{ req.member.last_name }}</td>
+                <td class="px-6 py-4">{{ req.member.email }}</td>
+                <td class="px-6 py-4">
+                    {% if req.mentor %}
+                        <span class="text-emerald-400">Mentor:</span> {{ req.mentor.name }}
+                    {% elif req.founder %}
+                        <span class="text-primary">Founder:</span> {{ req.founder.name }}
+                    {% endif %}
+                </td>
+                <td class="px-6 py-4 max-w-xs truncate" title="{{ req.message }}">{{ req.message }}</td>
+                <td class="px-6 py-4 text-right">{{ req.created_at.strftime('%b %d, %Y') }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="px-6 py-8 text-center text-gray-500">No mentorship requests found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

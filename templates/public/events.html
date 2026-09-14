@@ -38,6 +38,7 @@
     
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {% for event in events %}
+        <a href="{{ url_for('public_event_detail', id=event.id) }}" class="block group cursor-pointer h-full">
         <div class="bg-surface border border-gray-800 rounded-lg overflow-hidden flex flex-col hover:border-gray-600 transition group">
             <div class="relative h-48 overflow-hidden">
                 {% if event.image_filename %}
@@ -63,6 +64,7 @@
                 </button>
             </div>
         </div>
+        </a>
         {% else %}
         <p class="text-gray-400 col-span-full">No upcoming events right now.</p>
         {% endfor %}

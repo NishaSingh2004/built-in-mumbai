@@ -15,6 +15,15 @@
             <textarea name="description" rows="4" required class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">{{ item.description if item else '' }}</textarea>
         </div>
         <div>
+            <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Approach</label>
+            <textarea name="approach" rows="3" class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">{{ item.approach if item else '' }}</textarea>
+        </div>
+        <div>
+            <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Mentorship Details</label>
+            <textarea name="mentorship_details" rows="3" class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">{{ item.mentorship_details if item else '' }}</textarea>
+        </div>
+
+        <div>
             <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Event Date (YYYY-MM-DD HH:MM:SS)</label>
             <input type="text" name="event_date" value="{{ item.event_date.strftime('%Y-%m-%d %H:%M:%S') if item else '' }}" required class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">
         </div>
@@ -29,6 +38,15 @@
             <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Content</label>
             <textarea name="content" rows="6" required class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">{{ item.content if item else '' }}</textarea>
         </div>
+        <div>
+            <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Approach</label>
+            <textarea name="approach" rows="3" class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">{{ item.approach if item else '' }}</textarea>
+        </div>
+        <div>
+            <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Mentorship Details</label>
+            <textarea name="mentorship_details" rows="3" class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">{{ item.mentorship_details if item else '' }}</textarea>
+        </div>
+
         <div>
             <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Author</label>
             <input type="text" name="author" value="{{ item.author if item else '' }}" required class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">
@@ -48,6 +66,15 @@
             <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Bio</label>
             <textarea name="bio" rows="4" required class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">{{ item.bio if item else '' }}</textarea>
         </div>
+        <div>
+            <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Approach</label>
+            <textarea name="approach" rows="3" class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">{{ item.approach if item else '' }}</textarea>
+        </div>
+        <div>
+            <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Mentorship Details</label>
+            <textarea name="mentorship_details" rows="3" class="w-full bg-background border border-gray-700 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">{{ item.mentorship_details if item else '' }}</textarea>
+        </div>
+
         {% endif %}
 
         <div>

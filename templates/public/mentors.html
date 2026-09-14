@@ -54,6 +54,7 @@
     <h2 class="text-2xl font-heading text-white mb-12 uppercase">Meet Our Mentors</h2>
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         {% for mentor in mentors %}
+        <a href="{{ url_for('public_mentor_detail', id=mentor.id) }}" class="block group cursor-pointer h-full">
         <div class="bg-surface border border-gray-800 rounded p-6 text-center hover:border-gray-600 transition flex flex-col items-center">
             {% if mentor.image_filename %}
             <img src="{{ url_for('static', filename='uploads/mentors/' + mentor.image_filename) }}" class="w-20 h-20 rounded-full mb-4 object-cover grayscale">
@@ -64,6 +65,7 @@
             <h6 class="text-[10px] text-primary font-bold uppercase tracking-wider mb-4">{{ mentor.expertise }}</h6>
             <p class="text-xs text-gray-500 line-clamp-3 leading-relaxed">{{ mentor.bio }}</p>
         </div>
+        </a>
         {% else %}
         <p class="text-gray-400 col-span-full">No mentors found.</p>
         {% endfor %}

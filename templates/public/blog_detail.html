@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Blog - Build in Mumbai{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24">
+    <!-- Header Section -->
+    <header class="mb-12">
+        <h1 class="text-4xl md:text-6xl font-heading font-bold text-white leading-tight mb-6">
+            {{ item.title }}
+        </h1>
+        
+        <div class="flex items-center text-gray-400 text-sm mb-8 space-x-6">
+            
+            <div class="flex items-center">
+                <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-white font-bold mr-3 border border-gray-700">
+                    {{ item.author[0] | upper if item.author else 'A' }}
+                </div>
+                <span>By <strong class="text-white">{{ item.author }}</strong></span>
+            </div>
+            <div class="flex items-center">
+                <span>{{ item.created_at.strftime('%b %d, %Y') if item.created_at else '' }}</span>
+            </div>
+
+        </div>
+        
+        {% if item.image_filename %}
+        <div class="w-full h-64 md:h-96 rounded-xl overflow-hidden mb-12 relative border border-gray-800">
+            <img src="{{ url_for('static', filename='uploads/blogs/' + item.image_filename) }}" 
+                 alt="{{ item.title }}" 
+                 class="w-full h-full object-cover object-center filter grayscale hover:grayscale-0 transition duration-700">
+            <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80"></div>
+        </div>
+        {% endif %}
+    </header>
+
+    <!-- Content Section -->
+    <article class="prose prose-invert prose-lg max-w-none font-sans text-gray-300 leading-relaxed">
+        
+            <div class="whitespace-pre-wrap prose-headings:text-white prose-a:text-primary hover:prose-a:text-primaryHover prose-strong:text-white prose-blockquote:border-l-primary prose-blockquote:text-gray-400 prose-blockquote:italic prose-blockquote:pl-4">
+                {{ item.content }}
+            </div>
+
+    </article>
+    
+    <!-- Back Button -->
+    <div class="mt-16 pt-8 border-t border-gray-800">
+        <a href="javascript:history.back()" class="inline-flex items-center text-primary hover:text-white transition font-medium">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            Back to previous page
+        </a>
+    </div>
+</div>
+{% endblock %}

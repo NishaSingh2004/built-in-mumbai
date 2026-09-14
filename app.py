@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, abo
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_bcrypt import Bcrypt
 from config import Config
-from models import db, Admin, Event, Blog, Mentor, Founder, Member
+from models import db, Admin, Event, Blog, Mentor, Founder, Member, EventRegistration, EventExpertImage, MentorshipRequest
 
 # =============================================================================
 # FLASK APPLICATION SETUP & INITIALIZATION
@@ -84,9 +84,11 @@ def public_about():
 def public_community():
     """
     Route: Public Community Page
-    Purpose: Displays the community members mock page.
+    Purpose: Fetches all founders and mentors to display on the community page.
     """
-    return render_template('public/community.html')
+    founders = Founder.query.all()
+    mentors = Mentor.query.all()
+    return render_template('public/community.html', founders=founders, mentors=mentors)
 
 @app.route('/blogs')
 def public_blogs():
@@ -182,7 +184,85 @@ def public_logout():
     return redirect(url_for('index'))
 
 
+
+
 # =============================================================================
+# PUBLIC DETAIL ROUTES
+# =============================================================================
+
+import urllib.parse
+
+@app.route('/event/<int:id>')
+def public_event_detail(id):
+    item = Event.query.get_or_404(id)
+    is_registered = False
+    if 'member_id' in session:
+        reg = EventRegistration.query.filter_by(event_id=id, member_id=session['member_id']).first()
+        if reg:
+            is_registered = True
+            
+    # Generate Google Calendar link
+    title = urllib.parse.quote(item.title)
+    details = urllib.parse.quote(item.description)
+    # Format dates as YYYYMMDDTHHMMSSZ. Assuming UTC for simplicity.
+    start_str = item.event_date.strftime('%Y%m%dT%H%M%SZ') if item.event_date else ''
+    # Assume 2 hour duration
+    import datetime as dt
+    end_date = item.event_date + dt.timedelta(hours=2) if item.event_date else None
+    end_str = end_date.strftime('%Y%m%dT%H%M%SZ') if end_date else ''
+    gcal_link = f"https://calendar.google.com/calendar/render?action=TEMPLATE&text={title}&dates={start_str}/{end_str}&details={details}&location=Mumbai"
+    
+    return render_template('public/event_detail.html', item=item, is_registered=is_registered, gcal_link=gcal_link)
+
+@app.route('/event/<int:id>/register', methods=['POST'])
+def register_for_event(id):
+    if 'member_id' not in session:
+        flash('You must be logged in to register for events.', 'warning')
+        return redirect(url_for('public_login'))
+        
+    item = Event.query.get_or_404(id)
+    reg = EventRegistration.query.filter_by(event_id=id, member_id=session['member_id']).first()
+    if not reg:
+        expectation = request.form.get('expectation', '')
+        new_reg = EventRegistration(event_id=id, member_id=session['member_id'], expectation=expectation)
+        db.session.add(new_reg)
+        db.session.commit()
+        flash('Successfully registered for the event!', 'success')
+        
+    return redirect(url_for('public_event_detail', id=id))
+
+# Admin view for registrations
+@app.route('/admin/event/<int:id>/registrations')
+@login_required
+def admin_event_registrations(id):
+    event = Event.query.get_or_404(id)
+    registrations = EventRegistration.query.filter_by(event_id=id).all()
+    return render_template('admin/event_registrations.html', event=event, registrations=registrations)
+
+
+@app.route('/blog/<int:id>')
+def public_blog_detail(id):
+    item = Blog.query.get_or_404(id)
+    return render_template('public/blog_detail.html', item=item)
+
+@app.route('/mentor/<int:id>')
+def public_mentor_detail(id):
+    item = Mentor.query.get_or_404(id)
+    return render_template('public/mentor_detail.html', item=item)
+
+@app.route('/founder/<int:id>')
+def public_founder_detail(id):
+    item = Founder.query.get_or_404(id)
+    return render_template('public/founder_detail.html', item=item)
+
+# =============================================================================
+
+@app.route('/admin/mentorship_requests')
+@login_required
+def manage_mentorship_requests():
+    requests = MentorshipRequest.query.order_by(MentorshipRequest.created_at.desc()).all()
+    return render_template('admin/manage_mentorship_requests.html', items=requests)
+
 # ADMIN AUTHENTICATION ROUTES
 # =============================================================================
 
@@ -274,8 +354,20 @@ def add_event():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], 'events', filename))
             
-        new_event = Event(title=title, description=description, event_date=event_date, image_filename=filename)
+        new_event = Event(title=title, description=description, event_date=event_date, image_filename=filename, next_stage_journey=request.form.get('next_stage_journey'))
         db.session.add(new_event)
+
+        for i in range(1, 6):
+            exp_file = request.files.get(f'expert_image_{i}')
+            if exp_file and exp_file.filename != '':
+                exp_filename = secure_filename(exp_file.filename)
+                os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'events'), exist_ok=True)
+                exp_file.save(os.path.join(app.config['UPLOAD_FOLDER'], 'events', exp_filename))
+                # For add_event, the new_event needs to be added to db first to get an ID.
+                # Actually, adding objects to relationship works even without ID!
+                exp_img = EventExpertImage(image_filename=exp_filename)
+                new_event.expert_images.append(exp_img)
+
         db.session.commit()
         flash('Event added successfully!', 'success')
         return redirect(url_for('manage_events'))
@@ -308,6 +400,7 @@ def edit_event(id):
     if request.method == 'POST':
         item.title = request.form.get('title')
         item.description = request.form.get('description')
+        item.next_stage_journey = request.form.get('next_stage_journey')
         event_date_str = request.form.get('event_date')
         if event_date_str:
             try:
@@ -320,7 +413,18 @@ def edit_event(id):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], 'events', filename))
             item.image_filename = filename
-            
+
+        for i in range(1, 6):
+            exp_file = request.files.get(f'expert_image_{i}')
+            if exp_file and exp_file.filename != '':
+                exp_filename = secure_filename(exp_file.filename)
+                os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'events'), exist_ok=True)
+                exp_file.save(os.path.join(app.config['UPLOAD_FOLDER'], 'events', exp_filename))
+                # For add_event, the new_event needs to be added to db first to get an ID.
+                # Actually, adding objects to relationship works even without ID!
+                exp_img = EventExpertImage(image_filename=exp_filename)
+                item.expert_images.append(exp_img)
+
         db.session.commit()
         flash('Event updated successfully!', 'success')
         return redirect(url_for('manage_events'))
@@ -429,7 +533,8 @@ def add_mentor():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], 'mentors', filename))
             
-        new_mentor = Mentor(name=name, expertise=expertise, bio=bio, image_filename=filename)
+        approach=request.form.get('approach'), mentorship_details=request.form.get('mentorship_details')
+        new_mentor = Mentor(name=name, expertise=expertise, bio=bio, approach=approach, mentorship_details=mentorship_details, image_filename=filename)
         db.session.add(new_mentor)
         db.session.commit()
         flash('Mentor added successfully!', 'success')
@@ -464,6 +569,8 @@ def edit_mentor(id):
         item.name = request.form.get('name')
         item.expertise = request.form.get('expertise')
         item.bio = request.form.get('bio')
+        item.approach = request.form.get('approach')
+        item.mentorship_details = request.form.get('mentorship_details')
         
         file = request.files.get('image')
         if file and file.filename != '':
@@ -504,7 +611,8 @@ def add_founder():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], 'founders', filename))
             
-        new_founder = Founder(name=name, role=role, bio=bio, image_filename=filename)
+        approach=request.form.get('approach'), mentorship_details=request.form.get('mentorship_details')
+        new_founder = Founder(name=name, role=role, bio=bio, approach=approach, mentorship_details=mentorship_details, image_filename=filename)
         db.session.add(new_founder)
         db.session.commit()
         flash('Founder added successfully!', 'success')
@@ -540,6 +648,8 @@ def edit_founder(id):
         item.name = request.form.get('name')
         item.role = request.form.get('role')
         item.bio = request.form.get('bio')
+        item.approach = request.form.get('approach')
+        item.mentorship_details = request.form.get('mentorship_details')
         
         file = request.files.get('image')
         if file and file.filename != '':

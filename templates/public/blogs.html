@@ -26,6 +26,7 @@
     
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {% for blog in blogs %}
+        <a href="{{ url_for('public_blog_detail', id=blog.id) }}" class="block group cursor-pointer h-full">
         <div class="flex flex-col group cursor-pointer border-b border-gray-800 pb-6 md:border-none md:pb-0">
             <div class="relative h-56 overflow-hidden rounded-lg mb-6">
                 {% if blog.image_filename %}
@@ -42,6 +43,7 @@
             <p class="text-gray-400 text-xs mb-6 flex-grow line-clamp-3 leading-relaxed">{{ blog.content }}</p>
             <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest hover:text-white transition">READ ARTICLE +</p>
         </div>
+        </a>
         {% else %}
         <p class="text-gray-400">No blogs found.</p>
         {% endfor %}
