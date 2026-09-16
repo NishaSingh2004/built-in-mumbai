@@ -1,0 +1,101 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Superadmin Dashboard{% endblock %}
+{% block header %}Superadmin Dashboard{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h2 class="text-xl font-bold text-white mb-4">Add New Admin</h2>
+    <div class="bg-surface border border-gray-800 rounded-xl p-6">
+        <form action="{{ url_for('superadmin_add_admin') }}" method="POST" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Email Address</label>
+                    <input type="text" name="email" type="email" required class="w-full bg-background border border-gray-800 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Password</label>
+                    <input type="password" name="password" required class="w-full bg-background border border-gray-800 text-white rounded px-4 py-2 focus:outline-none focus:border-primary">
+                </div>
+            </div>
+            
+            <div class="pt-4 border-t border-gray-800">
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-4">Assign Sections (Permissions)</label>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <label class="flex items-center space-x-2 text-white text-sm cursor-pointer">
+                        <input type="checkbox" name="permissions" value="events" class="form-checkbox text-primary rounded bg-background border-gray-700">
+                        <span>Events</span>
+                    </label>
+                    <label class="flex items-center space-x-2 text-white text-sm cursor-pointer">
+                        <input type="checkbox" name="permissions" value="blogs" class="form-checkbox text-primary rounded bg-background border-gray-700">
+                        <span>Blogs</span>
+                    </label>
+                    <label class="flex items-center space-x-2 text-white text-sm cursor-pointer">
+                        <input type="checkbox" name="permissions" value="mentors" class="form-checkbox text-primary rounded bg-background border-gray-700">
+                        <span>Mentors</span>
+                    </label>
+                    <label class="flex items-center space-x-2 text-white text-sm cursor-pointer">
+                        <input type="checkbox" name="permissions" value="founders" class="form-checkbox text-primary rounded bg-background border-gray-700">
+                        <span>Founders</span>
+                    </label>
+                    <label class="flex items-center space-x-2 text-white text-sm cursor-pointer">
+                        <input type="checkbox" name="permissions" value="members" class="form-checkbox text-primary rounded bg-background border-gray-700">
+                        <span>Registered Members</span>
+                    </label>
+                    <label class="flex items-center space-x-2 text-white text-sm cursor-pointer">
+                        <input type="checkbox" name="permissions" value="mentorship_requests" class="form-checkbox text-primary rounded bg-background border-gray-700">
+                        <span>Mentorship Requests</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="pt-4">
+                <button type="submit" class="bg-primary hover:bg-primaryHover text-white px-6 py-2 rounded text-sm font-bold transition">Create Admin</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <h2 class="text-xl font-bold text-white mb-4">Manage Admins</h2>
+    <div class="bg-surface border border-gray-800 rounded-xl overflow-hidden">
+        <table class="w-full text-left text-sm text-gray-400">
+            <thead class="bg-gray-800 text-xs uppercase text-gray-500 font-bold">
+                <tr>
+                    <th class="px-6 py-4">Email Address</th>
+                    <th class="px-6 py-4">Role</th>
+                    <th class="px-6 py-4">Permissions</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-800">
+                {% for admin in admins %}
+                <tr class="hover:bg-gray-800/50 transition">
+                    <td class="px-6 py-4 font-medium text-white">{{ admin.email }}</td>
+                    <td class="px-6 py-4">
+                        {% if admin.is_superadmin %}
+                        <span class="text-green-500 font-bold">Superadmin</span>
+                        {% else %}
+                        <span class="text-blue-500">Admin</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if admin.is_superadmin %}
+                        <span class="text-gray-500">All Sections</span>
+                        {% else %}
+                        {{ admin.permissions or "None" }}
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        {% if not admin.is_superadmin or admin.id != current_user.id %}
+                        <form action="{{ url_for('superadmin_delete_admin', id=admin.id) }}" method="POST" class="inline" onsubmit="return confirm('Delete this admin?');">
+                            <button type="submit" class="text-red-500 hover:text-red-400 font-medium">Delete</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

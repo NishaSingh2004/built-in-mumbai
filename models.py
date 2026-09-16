@@ -13,8 +13,10 @@ class Admin(db.Model, UserMixin):
     Represents the administrator for the backend.
     """
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
+    is_superadmin = db.Column(db.Boolean, default=False)
+    permissions = db.Column(db.String(255), nullable=True)
 
 # -----------------------------------------------------------------------------
 # Event Model
@@ -89,6 +91,7 @@ class Member(db.Model):
     last_name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
+    profile_image_filename = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
@@ -141,3 +144,16 @@ class MentorshipRequest(db.Model):
     member = db.relationship('Member', backref=db.backref('mentorship_requests', lazy=True, cascade="all, delete-orphan"))
     mentor = db.relationship('Mentor', backref=db.backref('requests', lazy=True, cascade="all, delete-orphan"))
     founder = db.relationship('Founder', backref=db.backref('requests', lazy=True, cascade="all, delete-orphan"))
+
+# -----------------------------------------------------------------------------
+# Chatbot Message Model
+# -----------------------------------------------------------------------------
+class ChatbotMessage(db.Model):
+    """
+    Represents a conversation history with the chatbot.
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    user_email = db.Column(db.String(120), nullable=True)
+    message = db.Column(db.Text, nullable=False)
+    response = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)

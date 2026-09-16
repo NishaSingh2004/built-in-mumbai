@@ -1,0 +1,35 @@
+{% extends "admin/base_admin.html" %}
+{% block header_title %}Chatbot Messages{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-8">
+    <h1 class="text-2xl font-bold text-white">Chatbot Messages</h1>
+</div>
+
+<div class="bg-surface border border-gray-800 rounded-lg overflow-hidden">
+    <table class="w-full text-left text-sm text-gray-400">
+        <thead class="bg-gray-800/50 text-gray-300 uppercase text-xs font-bold border-b border-gray-800">
+            <tr>
+                <th class="px-6 py-4">Date</th>
+                <th class="px-6 py-4">User</th>
+                <th class="px-6 py-4">Message</th>
+                <th class="px-6 py-4">Bot Response</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-800">
+            {% for msg in messages %}
+            <tr class="hover:bg-gray-800/30 transition">
+                <td class="px-6 py-4 whitespace-nowrap">{{ msg.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td class="px-6 py-4">{{ msg.user_email or 'Guest' }}</td>
+                <td class="px-6 py-4 max-w-xs truncate" title="{{ msg.message }}">{{ msg.message }}</td>
+                <td class="px-6 py-4 max-w-xs truncate text-gray-500">{{ msg.response }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="px-6 py-8 text-center text-gray-500">No chatbot messages found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

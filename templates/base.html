@@ -71,7 +71,14 @@
                 <!-- Right Buttons -->
                 <div class="hidden md:flex items-center space-x-4">
                     {% if session.get('member_id') %}
-                    <a href="{{ url_for('public_logout') }}" class="text-gray-300 hover:text-white text-sm font-medium transition">
+                    <a href="{{ url_for('public_profile') }}" class="flex items-center justify-center w-8 h-8 rounded-full bg-gray-800 border border-gray-700 text-gray-300 hover:text-white hover:border-primary transition overflow-hidden" title="Profile">
+                        {% if session.get("member_photo") %}
+                        <img src="{{ url_for('static', filename='uploads/' + session.get('member_photo')) }}" class="w-full h-full object-cover" alt="Profile">
+                        {% else %}
+                        <span class="text-xs font-bold">{{ session.get("member_name", "U")[:1].upper() }}</span>
+                        {% endif %}
+                    </a>
+                    <a href="{{ url_for('public_logout') }}" class="text-gray-300 hover:text-white text-sm font-medium transition ml-4">
                         Logout
                     </a>
                     {% else %}
@@ -109,5 +116,99 @@
     </footer>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+<!-- Floating Chatbot Widget -->
+<div id="chatbot-widget" class="fixed bottom-6 right-6 z-50">
+    <!-- Chat Button -->
+    <button id="chatbot-toggle" class="bg-primary hover:bg-primaryHover text-white rounded-full p-4 shadow-lg transition transform hover:scale-110 flex items-center justify-center">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+    </button>
+
+    <!-- Chat Window (Hidden by default) -->
+    <div id="chatbot-window" class="hidden absolute bottom-16 right-0 w-80 bg-surface border border-gray-700 rounded-xl shadow-2xl overflow-hidden flex flex-col" style="height: 400px;">
+        <!-- Header -->
+        <div class="bg-gray-800 p-4 border-b border-gray-700 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <h3 class="text-white font-bold text-sm">Built In Mumbai Support</h3>
+            </div>
+            <button id="chatbot-close" class="text-gray-400 hover:text-white transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        
+        <!-- Messages Area -->
+        <div id="chatbot-messages" class="flex-1 p-4 overflow-y-auto space-y-4 bg-background">
+            <div class="flex items-start">
+                <div class="bg-gray-800 text-gray-200 text-sm p-3 rounded-lg rounded-tl-none max-w-[85%]">
+                    Hi there! ?? Welcome to Built In Mumbai. How can we help you today?
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-3 bg-gray-800 border-t border-gray-700">
+            <form id="chatbot-form" class="flex gap-2">
+                <input type="text" id="chatbot-input" placeholder="Type your message..." class="flex-1 bg-background text-white text-sm rounded-md px-3 py-2 border border-gray-700 focus:outline-none focus:border-primary" required>
+                <button type="submit" class="bg-primary hover:bg-primaryHover text-white p-2 rounded-md transition flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleBtn = document.getElementById('chatbot-toggle');
+        const closeBtn = document.getElementById('chatbot-close');
+        const chatWindow = document.getElementById('chatbot-window');
+        const chatForm = document.getElementById('chatbot-form');
+        const chatInput = document.getElementById('chatbot-input');
+        const messagesArea = document.getElementById('chatbot-messages');
+
+        function toggleChat() {
+            chatWindow.classList.toggle('hidden');
+        }
+
+        toggleBtn.addEventListener('click', toggleChat);
+        closeBtn.addEventListener('click', toggleChat);
+
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const text = chatInput.value.trim();
+            if(!text) return;
+
+            // Add user message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'flex items-start justify-end mb-4';
+            userMsg.innerHTML = '<div class="bg-primary text-white text-sm p-3 rounded-lg rounded-tr-none max-w-[85%] break-words">' + text.replace(/</g, "&lt;").replace(/>/g, "&gt;") + '</div>';
+            messagesArea.appendChild(userMsg);
+            
+            chatInput.value = '';
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+
+            // Send to backend
+            fetch('/api/chatbot', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: text })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const botMsg = document.createElement('div');
+                botMsg.className = 'flex items-start mb-4';
+                botMsg.innerHTML = '<div class="bg-gray-800 text-gray-200 text-sm p-3 rounded-lg rounded-tl-none max-w-[85%]">' + data.response + '</div>';
+                messagesArea.appendChild(botMsg);
+                messagesArea.scrollTop = messagesArea.scrollHeight;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+</script>
 </body>
 </html>

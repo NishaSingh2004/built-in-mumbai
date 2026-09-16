@@ -35,16 +35,38 @@
         <div class="h-20 flex items-center px-6 border-b border-gray-800">
             <h1 class="text-xl font-bold tracking-wider text-white">ADMIN</h1>
         </div>
-        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
             <a href="{{ url_for('admin_dashboard') }}" class="block px-4 py-3 rounded text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition">Dashboard</a>
+            
+            {% if current_user.is_superadmin or (current_user.permissions and 'members' in current_user.permissions) %}
             <a href="{{ url_for('manage_members') }}" class="block px-4 py-3 rounded text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition">Registered Members</a>
+            {% endif %}
             
+            {% if current_user.is_superadmin or (current_user.permissions and 'mentorship_requests' in current_user.permissions) %}
             <a href="{{ url_for('manage_mentorship_requests') }}" class="block px-4 py-3 rounded text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition">Mentorship Requests</a>
+            {% endif %}
             
+            {% if current_user.is_superadmin or (current_user.permissions and 'events' in current_user.permissions) %}
             <a href="{{ url_for('manage_events') }}" class="block px-4 py-3 rounded text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition">Manage Events</a>
+            {% endif %}
+            
+            {% if current_user.is_superadmin or (current_user.permissions and 'blogs' in current_user.permissions) %}
             <a href="{{ url_for('manage_blogs') }}" class="block px-4 py-3 rounded text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition">Manage Blogs</a>
+            {% endif %}
+            
+            {% if current_user.is_superadmin or (current_user.permissions and 'mentors' in current_user.permissions) %}
             <a href="{{ url_for('manage_mentors') }}" class="block px-4 py-3 rounded text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition">Manage Mentors</a>
+            {% endif %}
+            
+            {% if current_user.is_superadmin or (current_user.permissions and 'founders' in current_user.permissions) %}
             <a href="{{ url_for('manage_founders') }}" class="block px-4 py-3 rounded text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition">Manage Founders</a>
+            {% endif %}
+            
+            {% if current_user.is_superadmin %}
+            <div class="mt-8 mb-2 px-4 text-xs font-bold text-gray-500 uppercase tracking-widest">Superadmin</div>
+            <a href="{{ url_for('superadmin_dashboard') }}" class="block px-4 py-3 rounded text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition">Manage Admins</a>
+            <a href="{{ url_for('admin_chatbot') }}" class="block px-4 py-3 rounded text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition">Chatbot Messages</a>
+            {% endif %}
         </nav>
         <div class="p-4 border-t border-gray-800">
             <a href="{{ url_for('admin_logout') }}" class="block w-full text-center px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded text-sm transition">Logout</a>

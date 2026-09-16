@@ -4,10 +4,27 @@ from werkzeug.utils import secure_filename
 from fpdf import FPDF
 from io import BytesIO
 from flask import Flask, make_response, render_template, request, redirect, url_for, flash, abort, session
+from functools import wraps
+
+def permission_required(section):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if not current_user.is_authenticated:
+                return redirect(url_for('admin_login'))
+            if current_user.is_superadmin:
+                return f(*args, **kwargs)
+            if not current_user.permissions or section not in current_user.permissions.split(','):
+                flash('You do not have permission to access this section.', 'danger')
+                return redirect(url_for('admin_dashboard'))
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
+
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_bcrypt import Bcrypt
 from config import Config
-from models import db, Admin, Event, Blog, Mentor, Founder, Member, EventRegistration, EventExpertImage, MentorshipRequest
+from models import db, Admin, Event, Blog, Mentor, Founder, Member, EventRegistration, EventExpertImage, MentorshipRequest, ChatbotMessage
 
 # =============================================================================
 # FLASK APPLICATION SETUP & INITIALIZATION
@@ -133,6 +150,7 @@ def public_login():
         if member and bcrypt.check_password_hash(member.password_hash, password):
             session['member_id'] = member.id
             session['member_name'] = member.first_name
+            session['member_photo'] = member.profile_image_filename
             return redirect(url_for('public_success'))
         else:
             flash('Invalid email or password.', 'danger')
@@ -163,6 +181,7 @@ def public_signup():
         
         session['member_id'] = new_member.id
         session['member_name'] = new_member.first_name
+        session['member_photo'] = None
         return redirect(url_for('public_success'))
         
     return render_template('public/signup.html')
@@ -235,7 +254,7 @@ def register_for_event(id):
 
 # Admin view for registrations
 @app.route('/admin/event/<int:id>/registrations')
-@login_required
+@permission_required('events')
 def admin_event_registrations(id):
     event = Event.query.get_or_404(id)
     registrations = EventRegistration.query.filter_by(event_id=id).all()
@@ -285,22 +304,72 @@ def public_founder_detail(id):
 
 # =============================================================================
 
+
+@app.route('/profile', methods=['GET', 'POST'])
+def public_profile():
+    if 'member_id' not in session:
+        return redirect(url_for('public_login'))
+        
+    member = Member.query.get(session['member_id'])
+    
+    if request.method == 'POST':
+        member.first_name = request.form.get('first_name')
+        member.last_name = request.form.get('last_name')
+        member.email = request.form.get('email')
+        
+        # Handle file upload
+        file = request.files.get('profile_image')
+        if file and file.filename != '':
+            if allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                # Ensure unique filename
+                filename = f"{datetime.utcnow().strftime('%Y%md%H%M%S')}_{filename}"
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                member.profile_image_filename = filename
+                session['member_photo'] = filename
+        
+        db.session.commit()
+        session['member_name'] = member.first_name
+        session['member_photo'] = member.profile_image_filename
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('public_profile'))
+        
+    return render_template('public/profile.html', member=member)
+
+@app.route('/profile/delete', methods=['POST'])
+def delete_profile():
+    if 'member_id' not in session:
+        return redirect(url_for('public_login'))
+        
+    member = Member.query.get(session['member_id'])
+    if member:
+        # Delete related registrations and requests
+        EventRegistration.query.filter_by(member_id=member.id).delete()
+        MentorshipRequest.query.filter_by(member_id=member.id).delete()
+        db.session.delete(member)
+        db.session.commit()
+        
+    session.pop('member_id', None)
+    session.pop('member_name', None)
+    flash('Your account has been completely deleted.', 'success')
+    return redirect(url_for('index'))
+
 @app.route('/admin/mentorship_requests')
-@login_required
+@permission_required('mentorship_requests')
 def manage_mentorship_requests():
     requests = MentorshipRequest.query.order_by(MentorshipRequest.created_at.desc()).all()
     return render_template('admin/manage_mentorship_requests.html', items=requests)
 
 
 @app.route('/admin/members')
-@login_required
+@permission_required('members')
 def manage_members():
     members = Member.query.order_by(Member.created_at.desc()).all()
     return render_template('admin/manage_members.html', items=members)
 
 
 @app.route('/admin/mentorship_requests/export')
-@login_required
+@permission_required('mentorship_requests')
 def export_mentorship_requests():
     requests = MentorshipRequest.query.order_by(MentorshipRequest.created_at.desc()).all()
     
@@ -329,7 +398,7 @@ def export_mentorship_requests():
     return response
 
 @app.route('/admin/event/<int:id>/registrations/export')
-@login_required
+@permission_required('events')
 def export_event_registrations(id):
     event = Event.query.get_or_404(id)
     registrations = EventRegistration.query.filter_by(event_id=id).order_by(EventRegistration.created_at.desc()).all()
@@ -371,11 +440,11 @@ def admin_login():
         return redirect(url_for('admin_dashboard'))
         
     if request.method == 'POST':
-        username = request.form.get('username')
+        email = request.form.get('email')
         password = request.form.get('password')
         
-        # Look up admin by username
-        admin = Admin.query.filter_by(username=username).first()
+        # Look up admin by email
+        admin = Admin.query.filter_by(email=email).first()
         
         # Check if admin exists and password matches the hash
         if admin and bcrypt.check_password_hash(admin.password_hash, password):
@@ -420,7 +489,7 @@ def admin_dashboard():
 # =============================================================================
 
 @app.route('/admin/events')
-@login_required
+@permission_required('events')
 def manage_events():
     """
     Route: Manage Events
@@ -430,7 +499,7 @@ def manage_events():
     return render_template('admin/manage_events.html', items=events)
 
 @app.route('/admin/event/add', methods=['GET', 'POST'])
-@login_required
+@permission_required('events')
 def add_event():
     """
     Route: Add Event
@@ -525,7 +594,7 @@ def edit_event(id):
         return redirect(url_for('manage_events'))
     return render_template('admin/form_event.html', item=item)
 @app.route('/admin/blogs')
-@login_required
+@permission_required('blogs')
 def manage_blogs():
     """
     Route: Manage Blogs
@@ -535,7 +604,7 @@ def manage_blogs():
     return render_template('admin/manage_blogs.html', items=blogs)
 
 @app.route('/admin/blog/add', methods=['GET', 'POST'])
-@login_required
+@permission_required('blogs')
 def add_blog():
     """
     Route: Add Blog
@@ -600,7 +669,7 @@ def edit_blog(id):
         return redirect(url_for('manage_blogs'))
     return render_template('admin/form_blog.html', item=item)
 @app.route('/admin/mentors')
-@login_required
+@permission_required('mentors')
 def manage_mentors():
     """
     Route: Manage Mentors
@@ -610,7 +679,7 @@ def manage_mentors():
     return render_template('admin/manage_mentors.html', items=mentors)
 
 @app.route('/admin/mentor/add', methods=['GET', 'POST'])
-@login_required
+@permission_required('mentors')
 def add_mentor():
     """
     Route: Add Mentor
@@ -679,7 +748,7 @@ def edit_mentor(id):
         return redirect(url_for('manage_mentors'))
     return render_template('admin/form_mentor.html', item=item)
 @app.route('/admin/founders')
-@login_required
+@permission_required('founders')
 def manage_founders():
     """
     Route: Manage Founders
@@ -689,7 +758,7 @@ def manage_founders():
     return render_template('admin/manage_founders.html', items=founders)
 
 @app.route('/admin/founder/add', methods=['GET', 'POST'])
-@login_required
+@permission_required('founders')
 def add_founder():
     """
     Route: Add Founder
@@ -758,3 +827,106 @@ def edit_founder(id):
         flash('Founder updated successfully!', 'success')
         return redirect(url_for('manage_founders'))
     return render_template('admin/form_founder.html', item=item)
+
+@app.route('/admin/superadmin')
+@login_required
+def superadmin_dashboard():
+    if not current_user.is_superadmin:
+        flash('Access denied. Superadmin only.', 'danger')
+        return redirect(url_for('admin_dashboard'))
+    admins = Admin.query.all()
+    return render_template('admin/superadmin.html', admins=admins)
+
+@app.route('/admin/superadmin/add', methods=['POST'])
+@login_required
+def superadmin_add_admin():
+    if not current_user.is_superadmin:
+        abort(403)
+    email = request.form.get('email')
+    password = request.form.get('password')
+    permissions_list = request.form.getlist('permissions')
+    permissions_str = ",".join(permissions_list) if permissions_list else ""
+    
+    if Admin.query.filter_by(email=email).first():
+        flash('Admin email already exists.', 'warning')
+        return redirect(url_for('superadmin_dashboard'))
+        
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    new_admin = Admin(email=email, password_hash=hashed_password, is_superadmin=False, permissions=permissions_str)
+    db.session.add(new_admin)
+    db.session.commit()
+    flash('New admin created successfully!', 'success')
+    return redirect(url_for('superadmin_dashboard'))
+
+@app.route('/admin/superadmin/delete/<int:id>', methods=['POST'])
+@login_required
+def superadmin_delete_admin(id):
+    if not current_user.is_superadmin:
+        abort(403)
+    if id == current_user.id:
+        flash('You cannot delete yourself.', 'warning')
+        return redirect(url_for('superadmin_dashboard'))
+    
+    admin = Admin.query.get_or_404(id)
+    db.session.delete(admin)
+    db.session.commit()
+    flash('Admin deleted successfully.', 'success')
+    return redirect(url_for('superadmin_dashboard'))
+
+@app.route('/admin/member/<int:id>/edit', methods=['GET', 'POST'])
+@permission_required('members')
+def admin_edit_member(id):
+    member = Member.query.get_or_404(id)
+    if request.method == 'POST':
+        member.first_name = request.form.get('first_name')
+        member.last_name = request.form.get('last_name')
+        member.email = request.form.get('email')
+        db.session.commit()
+        flash('Member updated successfully.', 'success')
+        return redirect(url_for('manage_members'))
+    return render_template('admin/edit_member.html', member=member)
+
+@app.route('/admin/member/<int:id>/delete', methods=['POST'])
+@permission_required('members')
+def admin_delete_member(id):
+    member = Member.query.get_or_404(id)
+    EventRegistration.query.filter_by(member_id=member.id).delete()
+    MentorshipRequest.query.filter_by(member_id=member.id).delete()
+    db.session.delete(member)
+    db.session.commit()
+    flash('Member deleted successfully.', 'success')
+    return redirect(url_for('manage_members'))
+
+@app.route('/api/chatbot', methods=['POST'])
+def api_chatbot():
+    data = request.get_json()
+    message = data.get('message', '')
+    
+    # Generic bot response
+    response_text = "Thanks for reaching out! A member of our community team will get back to you shortly."
+    
+    user_email = None
+    if 'member_id' in session:
+        member = Member.query.get(session['member_id'])
+        if member:
+            user_email = member.email
+            
+    # Save to db
+    new_msg = ChatbotMessage(
+        user_email=user_email,
+        message=message,
+        response=response_text
+    )
+    db.session.add(new_msg)
+    db.session.commit()
+    
+    return {"response": response_text}
+
+@app.route('/admin/chatbot')
+@login_required
+def admin_chatbot():
+    if not current_user.is_superadmin:
+        flash('Access denied. Superadmin only.', 'danger')
+        return redirect(url_for('admin_dashboard'))
+    messages = ChatbotMessage.query.order_by(ChatbotMessage.created_at.desc()).all()
+    return render_template('admin/manage_chatbot.html', messages=messages)

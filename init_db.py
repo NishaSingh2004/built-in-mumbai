@@ -15,15 +15,15 @@ def initialize_database():
         db.create_all()
         
         # Check if an admin user already exists
-        admin = Admin.query.filter_by(username='admin').first()
+        admin = Admin.query.filter_by(email='admin@builtinmumbai.com').first()
         if not admin:
             print("Creating default admin user...")
             # Default password is 'admin123'
             hashed_password = bcrypt.generate_password_hash('admin123').decode('utf-8')
-            new_admin = Admin(username='admin', password_hash=hashed_password)
+            new_admin = Admin(email='admin@builtinmumbai.com', password_hash=hashed_password)
             db.session.add(new_admin)
             db.session.commit()
-            print("Default admin user created: username='admin', password='admin123'")
+            print("Default admin user created: email='admin@builtinmumbai.com', password='admin123'")
         else:
             print("Admin user already exists.")
             
