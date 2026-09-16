@@ -37,39 +37,96 @@
 
     </article>
 
-        {% if item.approach %}
-        <h3 class="text-2xl font-bold text-white mt-12 mb-4">Approach</h3>
-        <p class="whitespace-pre-wrap">{{ item.approach }}</p>
-        {% endif %}
+    <!-- Approach & Mentorship Section -->
+    <div class="mt-24 border-t border-gray-800 pt-20">
+        <h2 class="text-4xl md:text-5xl font-bold text-white mb-16">Approach & Mentorship</h2>
         
-        {% if item.mentorship_details %}
-        <h3 class="text-2xl font-bold text-white mt-12 mb-4">Mentorship Details</h3>
-        <p class="whitespace-pre-wrap">{{ item.mentorship_details }}</p>
-        {% endif %}
-
-        <!-- Mentorship Form -->
-        <div class="mt-16 bg-surface border border-gray-800 rounded-xl p-8">
-            <h3 class="text-xl font-bold text-white mb-4">Request Mentorship</h3>
-            <p class="text-gray-400 text-sm mb-6">Send a brief message explaining why you'd like to connect and what you're building.</p>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
+            <!-- Philosophy (Left) -->
+            <div class="bg-surface border border-gray-800 rounded-xl p-8 md:p-10 relative overflow-hidden">
+                <svg class="w-8 h-8 text-emerald-400 mb-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.078 2.015-.227 2.978m-3.44 2.04l.054.09A13.916 13.916 0 0112 11"></path></svg>
+                <h3 class="text-2xl font-bold text-white mb-6">The Philosophy</h3>
+                <p class="text-gray-400 leading-relaxed">
+                    {{ item.approach if item.approach else '"I specialize in helping early-stage founders navigate the chaotic path from initial product-market fit to sustainable growth..."' }}
+                </p>
+            </div>
             
-            <form method="POST" class="space-y-4">
-                <div>
-                    <label class="block text-gray-400 text-xs font-bold mb-2 uppercase">Your Message</label>
-                    <textarea name="message" rows="4" required placeholder="I am building..." class="w-full bg-background border border-gray-700 text-white rounded px-4 py-3 focus:outline-none focus:border-primary"></textarea>
+            <!-- Details (Right) -->
+            <div class="space-y-4">
+                <div class="bg-surface border border-gray-800 rounded-xl p-6 border-l-4 border-l-primary">
+                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2">WHO I HELP</p>
+                    <p class="text-gray-200 font-medium">Founders at Seed to Series A.</p>
                 </div>
-                <button type="submit" class="px-6 py-3 bg-primary hover:bg-primaryHover text-white rounded-lg text-sm font-bold tracking-wider uppercase transition shadow-lg shadow-primary/20">
-                    Send Request
-                </button>
-            </form>
+                <div class="bg-surface border border-gray-800 rounded-xl p-6 border-l-4 border-l-emerald-400">
+                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2">AVAILABILITY</p>
+                    <p class="text-gray-200 font-medium mb-1">2 spots left this month</p>
+                    <p class="text-xs text-emerald-400">2 hours / month</p>
+                </div>
+                <div class="bg-surface border border-gray-800 rounded-xl p-6">
+                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2">FORMAT</p>
+                    <p class="text-gray-400 text-sm">Bi-Weekly Deep Dives (Zoom) &<br>Async Support (Telegram).</p>
+                </div>
+            </div>
         </div>
-
-    
-    <!-- Back Button -->
-    <div class="mt-16 pt-8 border-t border-gray-800">
-        <a href="javascript:history.back()" class="inline-flex items-center text-primary hover:text-white transition font-medium">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-            Back to previous page
-        </a>
     </div>
+
+    <!-- Start the Conversation Section -->
+    <div class="mt-32 mb-20 border-t border-gray-800 pt-20">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+            
+            <!-- Left: Profile Info -->
+            <div class="lg:col-span-4 space-y-6">
+                <div class="bg-surface border border-gray-800 rounded-xl overflow-hidden relative pb-10">
+                    <img src="{{ url_for('static', filename='uploads/founders/' + item.image_filename) if item.image_filename else '' }}" class="w-full aspect-[4/5] object-cover grayscale">
+                    <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-background via-background/80 to-transparent pt-20">
+                        <h3 class="text-2xl font-bold text-white">{{ item.name }}</h3>
+                        <p class="text-gray-400 text-sm">Founder</p>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-3">EXPERTISE</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-gray-800 text-gray-300 text-[10px] font-bold rounded-full">{{ item.expertise }}</span>
+                        <span class="px-3 py-1 bg-emerald-900/30 text-emerald-400 border border-emerald-900 text-[10px] font-bold rounded-full">Consumer Tech</span>
+                    </div>
+                </div>
+                <div class="flex items-center text-gray-400 text-xs mt-6 pt-6 border-t border-gray-800">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Typically responds in 48 hours
+                </div>
+            </div>
+            
+            <!-- Right: Form -->
+            <div class="lg:col-span-8">
+                <h2 class="text-4xl md:text-5xl font-bold text-white mb-6 uppercase tracking-tight">START THE<br>CONVERSATION</h2>
+                <p class="text-gray-400 mb-12 max-w-xl">
+                    Tell {{ item.name.split(' ')[0] }} why you'd like to connect. Be concise, specific, and respect their time. The best requests are focused on a particular challenge or inflection point.
+                </p>
+                
+                <form method="POST" class="space-y-8">
+                    <div>
+                        <label class="block text-[10px] text-gray-300 font-bold mb-3 uppercase tracking-widest">WHY DO YOU WANT TO CONNECT?</label>
+                        <textarea name="why_connect" rows="3" required placeholder="E.g., I'm admiring your recent work on the user onboarding flow at..." class="w-full bg-background border border-gray-800 text-gray-300 rounded px-4 py-3 focus:outline-none focus:border-primary transition"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-gray-300 font-bold mb-3 uppercase tracking-widest">WHAT ARE YOU WORKING ON?</label>
+                        <textarea name="what_working" rows="3" required placeholder="Briefly describe your project or startup..." class="w-full bg-background border border-gray-800 text-gray-300 rounded px-4 py-3 focus:outline-none focus:border-primary transition"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] text-gray-300 font-bold mb-3 uppercase tracking-widest">WHAT WOULD YOU LIKE HELP WITH?</label>
+                        <textarea name="what_help" rows="3" required placeholder="Be specific about the advice or feedback you are seeking..." class="w-full bg-background border border-gray-800 text-gray-300 rounded px-4 py-3 focus:outline-none focus:border-primary transition"></textarea>
+                    </div>
+                    <div class="text-right mt-8">
+                        <button type="submit" class="px-8 py-3 bg-primary hover:bg-primaryHover text-white rounded text-xs font-bold tracking-wider uppercase transition shadow-lg shadow-primary/20 inline-flex items-center">
+                            SEND REQUEST
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+
 </div>
 {% endblock %}

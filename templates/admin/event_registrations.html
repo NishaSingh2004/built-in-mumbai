@@ -4,7 +4,13 @@
 {% block content %}
 <div class="flex justify-between items-center mb-8">
     <h1 class="text-2xl font-bold text-white">Registrations for "{{ event.title }}"</h1>
-    <a href="{{ url_for('manage_events') }}" class="text-primary hover:text-white transition text-sm font-medium">&larr; Back to Events</a>
+    <div class="flex items-center gap-4">
+        <a href="{{ url_for('export_event_registrations', id=event.id) }}" class="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition text-sm font-bold flex items-center">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2-2z"></path></svg>
+            Export PDF
+        </a>
+        <a href="{{ url_for('manage_events') }}" class="text-primary hover:text-white transition text-sm font-medium">&larr; Back to Events</a>
+    </div>
 </div>
 
 <div class="bg-surface border border-gray-800 rounded-lg overflow-hidden">
@@ -13,6 +19,7 @@
             <tr>
                 <th class="px-6 py-4">Name</th>
                 <th class="px-6 py-4">Email</th>
+                <th class="px-6 py-4">Expectation</th>
                 <th class="px-6 py-4 text-right">Registered On</th>
             </tr>
         </thead>
@@ -21,11 +28,12 @@
             <tr class="border-b border-gray-800 hover:bg-gray-800/30 transition">
                 <td class="px-6 py-4 font-medium text-white">{{ reg.member.first_name }} {{ reg.member.last_name }}</td>
                 <td class="px-6 py-4">{{ reg.member.email }}</td>
+                <td class="px-6 py-4">{{ reg.expectation if reg.expectation else '<span class="text-gray-600 italic">None provided</span>'|safe }}</td>
                 <td class="px-6 py-4 text-right">{{ reg.created_at.strftime('%b %d, %Y - %H:%M') }}</td>
             </tr>
             {% else %}
             <tr>
-                <td colspan="3" class="px-6 py-8 text-center text-gray-500">No one has registered for this event yet.</td>
+                <td colspan="4" class="px-6 py-8 text-center text-gray-500">No one has registered for this event yet.</td>
             </tr>
             {% endfor %}
         </tbody>

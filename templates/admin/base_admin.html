@@ -37,6 +37,10 @@
         </div>
         <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
             <a href="{{ url_for('admin_dashboard') }}" class="block px-4 py-3 rounded text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition">Dashboard</a>
+            <a href="{{ url_for('manage_members') }}" class="block px-4 py-3 rounded text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition">Registered Members</a>
+            
+            <a href="{{ url_for('manage_mentorship_requests') }}" class="block px-4 py-3 rounded text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition">Mentorship Requests</a>
+            
             <a href="{{ url_for('manage_events') }}" class="block px-4 py-3 rounded text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition">Manage Events</a>
             <a href="{{ url_for('manage_blogs') }}" class="block px-4 py-3 rounded text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition">Manage Blogs</a>
             <a href="{{ url_for('manage_mentors') }}" class="block px-4 py-3 rounded text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition">Manage Mentors</a>

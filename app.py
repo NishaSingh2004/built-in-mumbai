@@ -1,7 +1,9 @@
 import os
 from datetime import datetime
 from werkzeug.utils import secure_filename
-from flask import Flask, render_template, request, redirect, url_for, flash, abort, session
+from fpdf import FPDF
+from io import BytesIO
+from flask import Flask, make_response, render_template, request, redirect, url_for, flash, abort, session
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_bcrypt import Bcrypt
 from config import Config
@@ -245,14 +247,40 @@ def public_blog_detail(id):
     item = Blog.query.get_or_404(id)
     return render_template('public/blog_detail.html', item=item)
 
-@app.route('/mentor/<int:id>')
+@app.route('/mentor/<int:id>', methods=['GET', 'POST'])
 def public_mentor_detail(id):
     item = Mentor.query.get_or_404(id)
+    if request.method == 'POST':
+        if 'member_id' not in session:
+            flash('Please log in to request mentorship.', 'warning')
+            return redirect(url_for('public_login'))
+        why = request.form.get('why_connect', '')
+        what_working = request.form.get('what_working', '')
+        what_help = request.form.get('what_help', '')
+        msg = f"WHY DO YOU WANT TO CONNECT?\n{why}\n\nWHAT ARE YOU WORKING ON?\n{what_working}\n\nWHAT WOULD YOU LIKE HELP WITH?\n{what_help}"
+        req = MentorshipRequest(member_id=session['member_id'], mentor_id=id, message=msg)
+        db.session.add(req)
+        db.session.commit()
+        flash('Mentorship request sent successfully!', 'success')
+        return redirect(url_for('public_mentor_detail', id=id))
     return render_template('public/mentor_detail.html', item=item)
 
-@app.route('/founder/<int:id>')
+@app.route('/founder/<int:id>', methods=['GET', 'POST'])
 def public_founder_detail(id):
     item = Founder.query.get_or_404(id)
+    if request.method == 'POST':
+        if 'member_id' not in session:
+            flash('Please log in to request mentorship.', 'warning')
+            return redirect(url_for('public_login'))
+        why = request.form.get('why_connect', '')
+        what_working = request.form.get('what_working', '')
+        what_help = request.form.get('what_help', '')
+        msg = f"WHY DO YOU WANT TO CONNECT?\n{why}\n\nWHAT ARE YOU WORKING ON?\n{what_working}\n\nWHAT WOULD YOU LIKE HELP WITH?\n{what_help}"
+        req = MentorshipRequest(member_id=session['member_id'], founder_id=id, message=msg)
+        db.session.add(req)
+        db.session.commit()
+        flash('Mentorship request sent successfully!', 'success')
+        return redirect(url_for('public_founder_detail', id=id))
     return render_template('public/founder_detail.html', item=item)
 
 # =============================================================================
@@ -262,6 +290,73 @@ def public_founder_detail(id):
 def manage_mentorship_requests():
     requests = MentorshipRequest.query.order_by(MentorshipRequest.created_at.desc()).all()
     return render_template('admin/manage_mentorship_requests.html', items=requests)
+
+
+@app.route('/admin/members')
+@login_required
+def manage_members():
+    members = Member.query.order_by(Member.created_at.desc()).all()
+    return render_template('admin/manage_members.html', items=members)
+
+
+@app.route('/admin/mentorship_requests/export')
+@login_required
+def export_mentorship_requests():
+    requests = MentorshipRequest.query.order_by(MentorshipRequest.created_at.desc()).all()
+    
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("helvetica", "B", 16)
+    pdf.cell(0, 10, "Mentorship Requests Report", ln=True, align='C')
+    pdf.ln(10)
+    
+    pdf.set_font("helvetica", size=10)
+    for req in requests:
+        expert = f"Mentor: {req.mentor.name}" if req.mentor else f"Founder: {req.founder.name}"
+        pdf.set_font("helvetica", "B", 10)
+        pdf.cell(0, 8, f"Requested By: {req.member.first_name} {req.member.last_name} ({req.member.email})", ln=True)
+        pdf.cell(0, 8, f"Expert: {expert} | Date: {req.created_at.strftime('%Y-%m-%d')}", ln=True)
+        pdf.set_font("helvetica", size=10)
+        # Handle multi-line message
+        pdf.multi_cell(0, 6, f"Message:\n{req.message}")
+        pdf.ln(5)
+        pdf.line(10, pdf.get_y(), 200, pdf.get_y())
+        pdf.ln(5)
+        
+    response = make_response(bytes(pdf.output()))
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'attachment; filename=mentorship_requests.pdf'
+    return response
+
+@app.route('/admin/event/<int:id>/registrations/export')
+@login_required
+def export_event_registrations(id):
+    event = Event.query.get_or_404(id)
+    registrations = EventRegistration.query.filter_by(event_id=id).order_by(EventRegistration.created_at.desc()).all()
+    
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("helvetica", "B", 16)
+    pdf.cell(0, 10, f"Registrations: {event.title}", ln=True, align='C')
+    pdf.ln(10)
+    
+    pdf.set_font("helvetica", size=10)
+    for reg in registrations:
+        pdf.set_font("helvetica", "B", 10)
+        pdf.cell(0, 8, f"Name: {reg.member.first_name} {reg.member.last_name}", ln=True)
+        pdf.set_font("helvetica", size=10)
+        pdf.cell(0, 6, f"Email: {reg.member.email}")
+        pdf.ln(6)
+        if reg.expectation:
+            pdf.multi_cell(0, 6, f"Expectation: {reg.expectation}")
+        pdf.ln(5)
+        pdf.line(10, pdf.get_y(), 200, pdf.get_y())
+        pdf.ln(5)
+        
+    response = make_response(bytes(pdf.output()))
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = f'attachment; filename=event_registrations_{event.id}.pdf'
+    return response
 
 # ADMIN AUTHENTICATION ROUTES
 # =============================================================================
@@ -533,7 +628,8 @@ def add_mentor():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], 'mentors', filename))
             
-        approach=request.form.get('approach'), mentorship_details=request.form.get('mentorship_details')
+        approach=request.form.get('approach')
+        mentorship_details=request.form.get('mentorship_details')
         new_mentor = Mentor(name=name, expertise=expertise, bio=bio, approach=approach, mentorship_details=mentorship_details, image_filename=filename)
         db.session.add(new_mentor)
         db.session.commit()
@@ -611,7 +707,8 @@ def add_founder():
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], 'founders', filename))
             
-        approach=request.form.get('approach'), mentorship_details=request.form.get('mentorship_details')
+        approach=request.form.get('approach')
+        mentorship_details=request.form.get('mentorship_details')
         new_founder = Founder(name=name, role=role, bio=bio, approach=approach, mentorship_details=mentorship_details, image_filename=filename)
         db.session.add(new_founder)
         db.session.commit()

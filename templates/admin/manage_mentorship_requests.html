@@ -4,6 +4,12 @@
 {% block content %}
 <div class="flex justify-between items-center mb-8">
     <h1 class="text-2xl font-bold text-white">Mentorship Requests</h1>
+    <div class="flex gap-4">
+        <a href="{{ url_for('export_mentorship_requests') }}" class="px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700 transition text-sm font-bold flex items-center">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            Export PDF
+        </a>
+    </div>
 </div>
 
 <div class="bg-surface border border-gray-800 rounded-lg overflow-hidden">
@@ -29,7 +35,14 @@
                         <span class="text-primary">Founder:</span> {{ req.founder.name }}
                     {% endif %}
                 </td>
-                <td class="px-6 py-4 max-w-xs truncate" title="{{ req.message }}">{{ req.message }}</td>
+                <td class="px-6 py-4 max-w-md">
+                    <details class="group cursor-pointer">
+                        <summary class="text-primary hover:text-primaryHover font-bold text-xs uppercase tracking-wider outline-none list-none select-none flex items-center">
+                            View Request <svg class="w-4 h-4 ml-1 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </summary>
+                        <div class="mt-4 p-4 bg-background border border-gray-700 rounded text-gray-300 text-xs whitespace-pre-wrap leading-relaxed">{{ req.message }}</div>
+                    </details>
+                </td>
                 <td class="px-6 py-4 text-right">{{ req.created_at.strftime('%b %d, %Y') }}</td>
             </tr>
             {% else %}

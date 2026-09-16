@@ -52,27 +52,79 @@
 
     </article>
 
+    <!-- The Next Stage of the Journey -->
+    {% if item.next_stage_journey %}
+    <div class="mt-24 pt-20 border-t border-gray-800">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+            <div class="lg:col-span-4">
+                <h2 class="text-3xl md:text-4xl font-bold text-white uppercase tracking-tight leading-tight">THE NEXT STAGE OF THE<br>JOURNEY.</h2>
+            </div>
+            <div class="lg:col-span-8">
+                <p class="text-gray-300 mb-12">{{ item.next_stage_journey }}</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-surface border border-gray-800 rounded-lg p-6 hover:border-emerald-500/50 transition">
+                        <svg class="w-5 h-5 text-emerald-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        <p class="text-sm text-gray-300 font-medium">Series A benchmarks in the current market.</p>
+                    </div>
+                    <div class="bg-surface border border-gray-800 rounded-lg p-6 hover:border-emerald-500/50 transition">
+                        <svg class="w-5 h-5 text-emerald-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <p class="text-sm text-gray-300 font-medium">Building a high-performance leadership team.</p>
+                    </div>
+                    <div class="bg-surface border border-gray-800 rounded-lg p-6 hover:border-emerald-500/50 transition">
+                        <svg class="w-5 h-5 text-emerald-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                        <p class="text-sm text-gray-300 font-medium">Navigating the institutional investor landscape.</p>
+                    </div>
+                    <div class="bg-surface border border-gray-800 rounded-lg p-6 hover:border-emerald-500/50 transition">
+                        <svg class="w-5 h-5 text-emerald-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                        <p class="text-sm text-gray-300 font-medium">Culture as a scaling lever.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- The Experts -->
+    {% if item.expert_images %}
+    <div class="mt-32 mb-20 border-t border-gray-800 pt-16">
+        <div class="flex justify-between items-end border-b border-gray-800 pb-4 mb-12">
+            <h2 class="text-3xl font-bold text-white uppercase tracking-tight">THE EXPERTS</h2>
+            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">CURATED MINDS</p>
+        </div>
+        
+        <div class="flex gap-4 overflow-x-auto pb-4 snap-x">
+            {% for exp_img in item.expert_images %}
+            <div class="flex-none w-[280px] md:w-[320px] aspect-[3/4] rounded-lg overflow-hidden snap-start relative group">
+                <img src="{{ url_for('static', filename='uploads/events/' + exp_img.image_filename) }}" class="w-full h-full object-cover grayscale transition duration-700 group-hover:grayscale-0">
+                <div class="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Registration & Calendar Actions -->
-    <div class="mt-12 p-8 bg-surface border border-gray-800 rounded-xl flex flex-col md:flex-row items-center justify-between gap-6">
+    <div class="mt-20 p-8 md:p-12 bg-surface border border-gray-800 rounded-xl flex flex-col md:flex-row items-center justify-between gap-8">
         <div>
-            <h3 class="text-xl font-bold text-white mb-2">Join the Gathering</h3>
+            <h3 class="text-2xl font-bold text-white mb-2">Join the Gathering</h3>
             <p class="text-gray-400 text-sm">Secure your spot and add it to your schedule.</p>
         </div>
-        <div class="flex items-center space-x-4">
-            <a href="{{ gcal_link }}" target="_blank" class="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-lg text-sm font-bold tracking-wider uppercase transition border border-gray-700 flex items-center">
+        <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+            <a href="{{ gcal_link }}" target="_blank" class="w-full sm:w-auto px-6 py-4 bg-gray-800 hover:bg-gray-700 text-white rounded text-xs font-bold tracking-wider uppercase transition border border-gray-700 flex items-center justify-center">
                 <svg class="w-4 h-4 mr-2 text-primary" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg>
                 Calendar
             </a>
             
             {% if is_registered %}
-                <button disabled class="px-6 py-3 bg-emerald-900/50 text-emerald-400 border border-emerald-800 rounded-lg text-sm font-bold tracking-wider uppercase cursor-not-allowed flex items-center">
+                <button disabled class="w-full sm:w-auto px-6 py-4 bg-emerald-900/50 text-emerald-400 border border-emerald-800 rounded text-xs font-bold tracking-wider uppercase cursor-not-allowed flex items-center justify-center">
                     <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
                     Registered
                 </button>
             {% else %}
-                <form action="{{ url_for('register_for_event', id=item.id) }}" method="POST" class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-                    <input type="text" name="expectation" placeholder="Why are you joining? (Optional)" class="bg-background border border-gray-700 text-white rounded px-4 py-3 focus:outline-none focus:border-primary text-sm flex-1">
-                    <button type="submit" class="px-6 py-3 bg-primary hover:bg-primaryHover text-white rounded-lg text-sm font-bold tracking-wider uppercase transition shadow-lg shadow-primary/20 whitespace-nowrap">
+                <form action="{{ url_for('register_for_event', id=item.id) }}" method="POST" class="flex flex-col sm:flex-row gap-4 w-full">
+                    <input type="text" name="expectation" placeholder="Why are you joining? (Optional)" class="bg-background border border-gray-700 text-white rounded px-4 py-4 focus:outline-none focus:border-primary text-sm flex-1 min-w-[200px]">
+                    <button type="submit" class="w-full sm:w-auto px-8 py-4 bg-primary hover:bg-primaryHover text-white rounded text-xs font-bold tracking-wider uppercase transition shadow-lg shadow-primary/20 whitespace-nowrap">
                         Register Now
                     </button>
                 </form>
@@ -80,13 +132,5 @@
         </div>
     </div>
 
-    
-    <!-- Back Button -->
-    <div class="mt-16 pt-8 border-t border-gray-800">
-        <a href="javascript:history.back()" class="inline-flex items-center text-primary hover:text-white transition font-medium">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-            Back to previous page
-        </a>
-    </div>
 </div>
 {% endblock %}

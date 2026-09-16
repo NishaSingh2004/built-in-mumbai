@@ -5,7 +5,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     # Secret key for session management and flashing
-    SECRET_KEY = os.environ.get('SECRET_KEY') or secrets.token_hex(16)
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'buildinmumbai-secret-key-12345'
     
     # PostgreSQL Database Configuration
     # Format: postgresql://username:password@host:port/database_name
