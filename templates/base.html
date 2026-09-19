@@ -94,6 +94,32 @@
         </div>
     </nav>
 
+    
+    <!-- Flash Messages (Toast Notifications) -->
+    <div id="flash-toast-container" class="fixed top-24 right-6 z-[100] flex flex-col gap-3 pointer-events-none">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="toast-message pointer-events-auto flex items-center p-4 w-full max-w-sm text-white rounded-lg shadow-2xl transition-all duration-300 transform translate-x-full opacity-0 {% if category == 'success' %}bg-emerald-600 border border-emerald-500{% elif category == 'danger' %}bg-red-600 border border-red-500{% elif category == 'warning' %}bg-yellow-600 border border-yellow-500{% else %}bg-primary border border-primaryHover{% endif %}" role="alert">
+                  <div class="text-sm font-medium">{{ message }}</div>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toasts = document.querySelectorAll('.toast-message');
+            toasts.forEach((toast, index) => {
+                setTimeout(() => { toast.classList.remove('translate-x-full', 'opacity-0'); }, 100 + (index * 150));
+                setTimeout(() => {
+                    toast.classList.add('translate-x-full', 'opacity-0');
+                    setTimeout(() => toast.remove(), 300);
+                }, 2100 + (index * 150)); // Pop up for ~2 seconds
+            });
+        });
+    </script>
+
     <!-- Main Content -->
     <main class="flex-grow">
         {% block content %}{% endblock %}

@@ -25,32 +25,50 @@
                 </div>
             </div>
             <div class="mt-16 sm:mt-24 lg:mt-0 lg:col-span-6 flex justify-center items-center relative">
+                <!-- Custom Animations -->
+                <style>
+                    @keyframes popNode {
+                        0% { transform: scale(1); box-shadow: 0 0 0 rgba(124,58,237,0); }
+                        50% { transform: scale(1.15); box-shadow: 0 0 25px rgba(124,58,237,0.6); }
+                        100% { transform: scale(1); box-shadow: 0 0 0 rgba(124,58,237,0); }
+                    }
+                    @keyframes floatNode {
+                        0% { transform: translateY(0px) scale(1); }
+                        50% { transform: translateY(-10px) scale(1.1); }
+                        100% { transform: translateY(0px) scale(1); }
+                    }
+                    .animate-pop-0 { animation: popNode 3s infinite ease-in-out; }
+                    .animate-pop-1 { animation: floatNode 3s infinite ease-in-out 0.5s; }
+                    .animate-pop-2 { animation: floatNode 3.5s infinite ease-in-out 1s; }
+                    .animate-pop-3 { animation: floatNode 2.8s infinite ease-in-out 1.5s; }
+                    .animate-pop-4 { animation: floatNode 3.2s infinite ease-in-out 2s; }
+                </style>
                 <!-- Node Graph Graphic Mockup -->
-                <div class="relative w-80 h-80">
+                <div class="relative w-[500px] h-[500px]">
                     <div class="absolute inset-0 flex items-center justify-center">
-                        <div class="w-24 h-24 border border-primary/50 flex items-center justify-center rounded-lg bg-surface shadow-[0_0_15px_rgba(124,58,237,0.3)] z-10">
-                            <span class="text-4xl text-primary font-heading">B</span>
+                        <div class="animate-pop-0 w-36 h-36 border-2 border-primary/70 flex items-center justify-center rounded-2xl bg-surface z-10">
+                            <span class="text-7xl text-primary font-heading font-extrabold">B</span>
                         </div>
                     </div>
                     <!-- Nodes connecting -->
-                    <div class="absolute top-0 right-10 w-16 h-16 rounded overflow-hidden border-2 border-green-400">
-                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=100&h=100" class="w-full h-full object-cover opacity-80" alt="Member">
+                    <div class="animate-pop-1 absolute top-4 right-12 w-28 h-28 rounded-xl overflow-hidden border-4 border-green-400 z-20 shadow-xl">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200&h=200" class="w-full h-full object-cover" alt="Member">
                     </div>
-                    <div class="absolute top-10 left-10 w-12 h-12 rounded overflow-hidden border border-gray-700">
-                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=100&h=100" class="w-full h-full object-cover opacity-60" alt="Member">
+                    <div class="animate-pop-2 absolute top-16 left-8 w-24 h-24 rounded-xl overflow-hidden border-2 border-gray-500 z-20 shadow-xl">
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200&h=200" class="w-full h-full object-cover opacity-90" alt="Member">
                     </div>
-                    <div class="absolute bottom-10 right-20 w-14 h-14 rounded overflow-hidden border border-gray-700">
-                        <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=100&h=100" class="w-full h-full object-cover opacity-60" alt="Member">
+                    <div class="animate-pop-3 absolute bottom-12 right-16 w-24 h-24 rounded-xl overflow-hidden border-2 border-gray-500 z-20 shadow-xl">
+                        <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200&h=200" class="w-full h-full object-cover opacity-90" alt="Member">
                     </div>
-                    <div class="absolute bottom-20 left-10 w-14 h-14 rounded overflow-hidden border border-gray-700">
-                        <img src="https://images.unsplash.com/photo-1557862921-37829c790f19?auto=format&fit=crop&q=80&w=100&h=100" class="w-full h-full object-cover opacity-60" alt="Member">
+                    <div class="animate-pop-4 absolute bottom-24 left-12 w-20 h-20 rounded-xl overflow-hidden border-2 border-gray-500 z-20 shadow-xl">
+                        <img src="https://images.unsplash.com/photo-1557862921-37829c790f19?auto=format&fit=crop&q=80&w=200&h=200" class="w-full h-full object-cover opacity-90" alt="Member">
                     </div>
                     <!-- Lines (SVG) -->
                     <svg class="absolute inset-0 w-full h-full -z-10" pointer-events="none">
-                        <line x1="50%" y1="50%" x2="80%" y2="20%" stroke="#4B5563" stroke-width="1" stroke-dasharray="4" />
-                        <line x1="50%" y1="50%" x2="30%" y2="30%" stroke="#4B5563" stroke-width="1" stroke-dasharray="4" />
-                        <line x1="50%" y1="50%" x2="70%" y2="80%" stroke="#4B5563" stroke-width="1" stroke-dasharray="4" />
-                        <line x1="50%" y1="50%" x2="25%" y2="70%" stroke="#4B5563" stroke-width="1" stroke-dasharray="4" />
+                        <line x1="50%" y1="50%" x2="80%" y2="20%" stroke="#6D28D9" stroke-width="2" stroke-dasharray="6" opacity="0.6" />
+                        <line x1="50%" y1="50%" x2="25%" y2="25%" stroke="#6D28D9" stroke-width="2" stroke-dasharray="6" opacity="0.6" />
+                        <line x1="50%" y1="50%" x2="75%" y2="80%" stroke="#6D28D9" stroke-width="2" stroke-dasharray="6" opacity="0.6" />
+                        <line x1="50%" y1="50%" x2="20%" y2="70%" stroke="#6D28D9" stroke-width="2" stroke-dasharray="6" opacity="0.6" />
                     </svg>
                 </div>
             </div>
