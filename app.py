@@ -31,7 +31,8 @@ from models import db, Admin, Event, Blog, Mentor, Founder, Member, EventRegistr
 # =============================================================================
 
 # Initialize the Flask application
-app = Flask(__name__)
+basedir_app = os.path.abspath(os.path.dirname(__file__))
+app = Flask(__name__, template_folder=os.path.join(basedir_app, 'templates'), static_folder=os.path.join(basedir_app, 'static'))
 # Load configuration from config.py
 app.config.from_object(Config)
 
