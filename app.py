@@ -36,7 +36,14 @@ app = Flask(__name__, template_folder=os.path.join(basedir_app, 'templates'), st
 # Load configuration from config.py
 app.config.from_object(Config)
 
+
+from flask import send_from_directory
+@app.route('/static/uploads/<path:filename>')
+def custom_static_uploads(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
 # Initialize Database with the Flask app
+
 db.init_app(app)
 
 # Initialize Bcrypt for password hashing
@@ -807,9 +814,19 @@ def delete_founder(id):
 # =============================================================================
 # AUTO-INITIALIZE DATABASE FOR VERCEL DEPLOYMENT
 # =============================================================================
+
+# =============================================================================
+# AUTO-INITIALIZE DATABASE FOR VERCEL DEPLOYMENT
+# =============================================================================
 with app.app_context():
     try:
+        os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'events'), exist_ok=True)
+        os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'blogs'), exist_ok=True)
+        os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'mentors'), exist_ok=True)
+        os.makedirs(os.path.join(app.config['UPLOAD_FOLDER'], 'founders'), exist_ok=True)
+        
         db.create_all()
+
         # Create default admin if not exists
         if not Admin.query.filter_by(email='admin@builtinmumbai.com').first():
             hashed_password = bcrypt.generate_password_hash('admin123').decode('utf-8')

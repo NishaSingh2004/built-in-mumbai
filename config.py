@@ -17,7 +17,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # File Upload Configuration
-    UPLOAD_FOLDER = os.path.join(basedir, 'static', 'uploads')
+    UPLOAD_FOLDER = '/tmp/uploads' if os.environ.get('VERCEL') else os.path.join(basedir, 'static', 'uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024 # 16 MB max upload size
     
     # Allowed extensions for uploads
