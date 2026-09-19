@@ -802,6 +802,22 @@ def delete_founder(id):
 # =============================================================================
 # MAIN ENTRY POINT
 # =============================================================================
+
+# =============================================================================
+# AUTO-INITIALIZE DATABASE FOR VERCEL DEPLOYMENT
+# =============================================================================
+with app.app_context():
+    try:
+        db.create_all()
+        # Create default admin if not exists
+        if not Admin.query.filter_by(email='admin@builtinmumbai.com').first():
+            hashed_password = bcrypt.generate_password_hash('admin123').decode('utf-8')
+            new_admin = Admin(email='admin@builtinmumbai.com', password_hash=hashed_password, is_superadmin=True)
+            db.session.add(new_admin)
+            db.session.commit()
+    except Exception as e:
+        print(f"Could not initialize database: {e}")
+
 if __name__ == '__main__':
     # Run the application in debug mode on port 5000
     app.run(debug=True, port=5000)
