@@ -14,5 +14,3 @@ services:
 
 databases:
   - name: build-in-mumbai-db
-    databaseName: builtinmumbai
-    user: postgres
